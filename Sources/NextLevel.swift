@@ -1124,7 +1124,7 @@ extension NextLevel {
             self._videoOutput?.alwaysDiscardsLateVideoFrames = false
             
             var videoSettings = [String(kCVPixelBufferPixelFormatTypeKey):Int(kCVPixelFormatType_32BGRA)]
-            if let formatTypes = self._videoOutput?.availableVideoCVPixelFormatTypes as? [Int] {
+            if let formatTypes = self._videoOutput?.availableVideoCodecTypes as? [Int] {
                 var supportsFullRange = false
                 var supportsVideoRange = false
                 for format: Int in formatTypes {
@@ -1306,7 +1306,7 @@ extension NextLevel {
                 
                 if let output = self._photoOutput {
                     if self.photoConfiguration.flashMode != newValue.avfoundationType {
-                        let modes = output.supportedFlashModes
+                        let modes = output.__supportedFlashModes
                         let numberMode = NSNumber(integerLiteral: Int(newValue.avfoundationType.rawValue))
                         if modes.contains(numberMode) {
                             self.photoConfiguration.flashMode = newValue.avfoundationType
@@ -2021,11 +2021,8 @@ extension NextLevel {
     public var supportsVideoCapture: Bool {
         get {
             let deviceTypes: [AVCaptureDeviceType] = [.builtInWideAngleCamera, .builtInTelephotoCamera, .builtInDuoCamera]
-            if let discoverySession = AVCaptureDeviceDiscoverySession(deviceTypes: deviceTypes, mediaType: AVMediaTypeVideo, position: .unspecified) {
-                return discoverySession.devices.count > 0
-            } else {
-                return false
-            }
+            let discoverySession = AVCaptureDeviceDiscoverySession(__deviceTypes: deviceTypes, mediaType: AVMediaTypeVideo, position: .unspecified)
+            return discoverySession.devices.count > 0
         }
     }
     
